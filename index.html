@@ -7,12 +7,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
     * {
-        font-family: Arial, sans-serif;
+        font-family: 'Georgia', serif;
         box-sizing: border-box;
     }
 
     body {
-        background-color: #f0f4f8;
+        background-color: white;
         color: #1a1a2e;
         max-width: 800px;
         margin: 0 auto;
@@ -20,13 +20,13 @@
     }
 
     h1 {
-        color: #1a73e8;
-        border-bottom: 2px solid #1a73e8;
+        color: #165791;
+        border-bottom: 2px solid #165791;
         padding-bottom: 10px;
     }
 
     h2 {
-        color: #1a73e8;
+        color: #165791;
         font-size: 1.2rem;
     }
 
@@ -41,7 +41,7 @@
 
     button {
         padding: 8px 16px;
-        background-color: #1a73e8;
+        background-color: #165791;
         color: white;
         border: none;
         border-radius: 6px;
@@ -50,15 +50,13 @@
     }
 
     button:hover {
-        background-color: #1558b0;
+        background-color: #0e3d6b;
     }
 
     div {
-        background-color: white;
-        border-radius: 10px;
         padding: 16px 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        margin-bottom: 0;
+        border-bottom: 1px solid #165791;
     }
 
     ul {
@@ -67,7 +65,6 @@
 
     li {
         padding: 6px 0;
-        border-bottom: 1px solid #f0f4f8;
     }
 
     #spending-chart {
@@ -80,28 +77,27 @@
     #income-display, #total-expenses, #net-savings {
         font-size: 1.1rem;
         font-weight: bold;
-        color: #1a73e8;
+        color: #165791;
     }
-</style>
+    </style>
 </head>
 <body>
-    
+
     <h1>Finance Manager</h1>
 
     <!-- Entering Income -->
     <div id="income-section">
-     <h2>Monthly Income</h2>
-     <input type="number" id="income-input" placeholder="Enter monthly income" />
-     <button onclick="setIncome()"> Set Income </button>
-     <p id="income-display"> Income: $0</p>
-
+        <h2>Monthly Income</h2>
+        <input type="number" id="income-input" placeholder="Enter monthly income" />
+        <button onclick="setIncome()">Set Income</button>
+        <p id="income-display">Income: $0</p>
     </div>
 
     <!-- Adding Transactions -->
-     <div id="transaction-section">
-        <h2> Add Transaction</h2>
-        <input type ="text" id="description-input" placeholder="Description" />
-        <input type ="number" id="amount-input" placeholder="Amount" />
+    <div id="transaction-section">
+        <h2>Add Transaction</h2>
+        <input type="text" id="description-input" placeholder="Description" />
+        <input type="number" id="amount-input" placeholder="Amount" />
         <select id="spending-type">
             <option value="Housing">Housing</option>
             <option value="Food">Food</option>
@@ -113,26 +109,26 @@
             <option value="Other">Other</option>
         </select>
         <button onclick="addTransaction()">Add Transaction</button>
-     </div>
+    </div>
 
-     <!-- Displaying Transactions -->
-        <div id="transactions-display">
-            <h2>Transactions</h2>
-            <ul id="transaction-list"> </ul>
-        </div>
-    
-        <!-- Summary -->
-         <div id="summary-section">
-            <h2>Summary</h2>
-            <p id="total-expenses"> Total Expenses: $0</p>
-            <p id="net-savings"> Net Savings: $0</p>
-        </div>
+    <!-- Displaying Transactions -->
+    <div id="transactions-display">
+        <h2>Transactions</h2>
+        <ul id="transaction-list"></ul>
+    </div>
 
-        <!-- Chart -->
-         <div id="chart-section">
-            <h2>Spending Breakdown</h2>
-            <canvas id="spending-chart"></canvas>
-         </div>
+    <!-- Summary -->
+    <div id="summary-section">
+        <h2>Summary</h2>
+        <p id="total-expenses">Total Expenses: $0</p>
+        <p id="net-savings">Net Savings: $0</p>
+    </div>
+
+    <!-- Chart -->
+    <div id="chart-section">
+        <h2>Spending Breakdown</h2>
+        <canvas id="spending-chart"></canvas>
+    </div>
 
     <script>
         let income = 0;
@@ -147,20 +143,20 @@
 
         function updateSummary() {
             let totalExpenses = 0;
-            for(let i=0; i<transactions.length; i++) {
+            for (let i = 0; i < transactions.length; i++) {
                 totalExpenses += transactions[i].amount;
             }
             let netSavings = income - totalExpenses;
             document.getElementById("total-expenses").textContent = "Total Expenses: $" + totalExpenses;
             document.getElementById("net-savings").textContent = "Net Savings: $" + netSavings;
         }
-        
+
         function addTransaction() {
             let description = document.getElementById("description-input").value;
             let amount = parseFloat(document.getElementById("amount-input").value);
             let category = document.getElementById("spending-type").value;
-            
-            if(description === "" || isNaN(amount) || amount <= 0) {
+
+            if (description === "" || isNaN(amount) || amount <= 0) {
                 alert("Please enter valid values for all fields.");
                 return;
             }
@@ -184,12 +180,13 @@
             let transactionList = document.getElementById("transaction-list");
             transactionList.innerHTML = "";
 
-            for(let i=0; i<transactions.length; i++) {
+            for (let i = 0; i < transactions.length; i++) {
                 let item = document.createElement("li");
                 item.textContent = transactions[i].description + ": $" + transactions[i].amount + " (" + transactions[i].category + ")";
                 transactionList.appendChild(item);
             }
         }
+
         function updateChart() {
             let categoryTotals = {};
 
@@ -231,24 +228,19 @@
         }
 
         function loadFromLocalStorage() {
-            let savedTransactions = localStorage.getItem("transactions");
             let savedIncome = localStorage.getItem("income");
+            let savedTransactions = localStorage.getItem("transactions");
 
-            if (savedIncome !== null) {
-                income = parseFloat(savedIncome);
-                document.getElementById("income-display").textContent = "Income: $" + income;
-            }
+            income = savedIncome !== null ? parseFloat(savedIncome) : 0;
+            transactions = savedTransactions !== null ? JSON.parse(savedTransactions) : [];
 
-            if (savedTransactions !== null) {
-                transactions = JSON.parse(savedTransactions);
-                displayTransactions();
-                updateChart();
-            }
+            document.getElementById("income-display").textContent = "Income: $" + income;
+            displayTransactions();
+            updateChart();
+            updateSummary();
         }
 
         loadFromLocalStorage();
-
-    
     </script>
 
 </body>
