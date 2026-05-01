@@ -79,11 +79,24 @@
         font-weight: bold;
         color: #165791;
     }
+
+    #month-selector {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
     </style>
 </head>
 <body>
 
     <h1>Finance Manager</h1>
+
+    <!-- Month Selector -->
+    <div id="month-selector">
+        <button onclick="changeMonth(-1)">&#8592;</button>
+        <h2 id="current-month-display">May 2026</h2>
+        <button onclick="changeMonth(1)">&#8594;</button>
+    </div>
 
     <!-- Entering Income -->
     <div id="income-section">
@@ -133,6 +146,30 @@
     <script>
         let income = 0;
         let transactions = [];
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        function getMonthKey() {
+            return monthNames[currentMonth] + "_" + currentYear;
+        }
+
+        function updateMonthDisplay() {
+            document.getElementById("current-month-display").textContent = monthNames[currentMonth] + " " + currentYear;
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            income = 0;
+            transactions = [];
+            updateMonthDisplay();
+            loadFromLocalStorage();
+        }
 
         function setIncome() {
             income = parseFloat(document.getElementById("income-input").value);
@@ -223,23 +260,27 @@
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem("transactions", JSON.stringify(transactions));
-            localStorage.setItem("income", income);
+            let key = getMonthKey();
+            localStorage.setItem("transactions_" + key, JSON.stringify(transactions));
+            localStorage.setItem("income_" + key, income);
         }
 
         function loadFromLocalStorage() {
-            let savedIncome = localStorage.getItem("income");
-            let savedTransactions = localStorage.getItem("transactions");
+            let key = getMonthKey();
+            let savedIncome = localStorage.getItem("income_" + key);
+            let savedTransactions = localStorage.getItem("transactions_" + key);
 
             income = savedIncome !== null ? parseFloat(savedIncome) : 0;
             transactions = savedTransactions !== null ? JSON.parse(savedTransactions) : [];
 
             document.getElementById("income-display").textContent = "Income: $" + income;
+            document.getElementById("income-input").value = "";
             displayTransactions();
             updateChart();
             updateSummary();
         }
 
+        updateMonthDisplay();
         loadFromLocalStorage();
     </script>
 
