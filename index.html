@@ -204,7 +204,7 @@
             for (let i = 0; i < transactions.length; i++) {
                 totalExpenses += transactions[i].amount;
             }
-            let netSavings = income - totalExpenses;
+            let netSavings = income > 0 ? income - totalExpenses : 0;
             document.getElementById("total-expenses").textContent = "Total Expenses: $" + totalExpenses;
             document.getElementById("net-savings").textContent = "Net Savings: $" + netSavings;
         }
